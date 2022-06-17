@@ -1,0 +1,53 @@
+
+.SelectedFoods-Container{
+    height: 160px;
+  
+}
+.itemContainer{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 15px 0 15px 0;
+    background: #FFD8BE;
+    border-radius: 10px;
+    box-shadow: #fff 0px 30px 60px -12px inset, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset;
+
+}
+
+.itemContainer h4{
+    color: #000;
+}
+
+.TittleSelectedFoods{
+    font-family: The Girl Next Door;
+font-style: normal;
+font-weight: normal;
+font-size: 42px;
+line-height: 77px;
+text-transform: capitalize;
+display: flex;
+justify-content: center;
+color: #000;
+
+
+}
+
+.Owl-theme{
+    border: 2px solid #000;
+    
+}
+
+.CarouselTags-Container{
+  
+    width: 800px;
+    margin: auto;
+    height: auto;
+  
+}
+
+.left{
+background-image:url("../../Images/arrow-left.png");
+left: -33px;
+color: black;
+}
+
