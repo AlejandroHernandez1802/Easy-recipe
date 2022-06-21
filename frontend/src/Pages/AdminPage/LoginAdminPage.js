@@ -2,10 +2,11 @@ import './Css/Forms.css';
 import FormInputs from '../../Components/AdminPage/RegisterForm/FormInputs';
 import AlterNav from '../../Components/Global/AlterNav';
 import{useState} from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import axios from 'axios';
-
 const RegisterAdminPage = () => {
+
+    const history = useHistory();
 
     const [values, setValues] = useState({
         email:"",
@@ -43,7 +44,7 @@ const RegisterAdminPage = () => {
                 alert("Sorry, there is no admin profiles registered with those credentials.")
             }
             else{
-                console.log("Correct access");
+                history.push('/select-operation');
             }
         })        
     }

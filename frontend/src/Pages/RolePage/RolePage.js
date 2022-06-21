@@ -10,7 +10,7 @@ const RolePage = () =>{
                 <Link to={{pathname:"/login-admin"}}>
                     <div className='column admin'>
                         <div className='text-container'>
-                            <h1 className='text'>I'm an admin</h1>
+                            <h1 className='text'>Soy administrador</h1>
                         </div>
                     </div>
                 </Link>
@@ -18,7 +18,7 @@ const RolePage = () =>{
                 <Link to={{pathname:"/homepage"}}>
                     <div className='column user'>
                         <div className='text-container'>
-                            <h1 className='text'>I'm an user</h1>
+                            <h1 className='text'>Soy usuario</h1>
                         </div>
                     </div>
                 </Link>
