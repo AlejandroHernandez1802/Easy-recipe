@@ -2,7 +2,6 @@ import './Style/SelectOperation.css';
 import AlterNav from '../../../../Components/Global/AlterNav';
 import { Link } from 'react-router-dom';
 
-
 const SelectOperation = () =>{
 
     return (

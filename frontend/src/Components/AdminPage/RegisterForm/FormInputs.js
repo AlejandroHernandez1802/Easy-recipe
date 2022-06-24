@@ -15,7 +15,7 @@ const FormInputs = (props) => {
         <> 
             <div className='form-inputs'>
                 <label className='form-label'>{label}</label>
-                <input {...inputProps} onChange={onChange} onBlur={handleFocus} focused={focused.toString()}/>
+                <input className='registerForm-input' {...inputProps} onChange={onChange} onBlur={handleFocus} focused={focused.toString()}/>
                 <span className='registerFormErrorMessage'>{errorMssg}</span>
             </div>
         </>

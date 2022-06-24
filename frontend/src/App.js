@@ -5,6 +5,7 @@ import RolePage from './Pages/RolePage/RolePage';
 
 import LoginAdminPage from './Pages/AdminPage/LoginAdminPage';
 import RegisterAdminPage from './Pages/AdminPage/RegisterAdminPage';
+import AdminLogged from './Pages/AdminPage/AdminLogged';
 import SelectOperation from './Pages/AdminPage/Operations/SelectOperation/SelectOperation';
 import RecipesOperations from './Pages/AdminPage/Operations/RecipesOperations';
 import CategoriesOperations from './Pages/AdminPage/Operations/CategoriesOperations';
@@ -30,6 +31,7 @@ class App extends React.Component{
             {/* Admin login/register pages */}
             <Route path="/login-admin" component={LoginAdminPage}/> 
             <Route path="/register-admin" component={RegisterAdminPage}/> 
+            <Route path="/admin-logged" component={AdminLogged}/>
             {/* Admin operations pages */}
             <Route path="/select-operation" component={SelectOperation}/>
             <Route path="/recipes-operations" component={RecipesOperations}/>

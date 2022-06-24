@@ -1,7 +1,7 @@
-import './Styles/FormInputs.css';
+import './Styles/FormInput.css';
 
 
-const FormInputs = (props) => {
+const FormInput = (props) => {
 
     const {label, onChange, id, ...inputProps} = props;
 
@@ -9,11 +9,11 @@ const FormInputs = (props) => {
         <> 
             <div className='form-inputs'>
                 <label className='form-label'>{label}</label>
-                <input className='loginForm-input' {...inputProps} onChange={onChange}/>
+                <input className='loggedAccount-input' {...inputProps} onChange={onChange}/>
             </div>
         </>
     )
 
 }
 
-export default FormInputs;
+export default FormInput;

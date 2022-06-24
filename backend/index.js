@@ -24,12 +24,12 @@ const db = mysql.createConnection({
 //Admin pages
     //Create a new admin
     app.post("/api/adminRegister", (req, res) => {
-        const name = req.body.AdminName;
+        const userName = req.body.AdminName;
         const email = req.body.AdminEmail;
         const password = req.body.AdminPassword;
 
-        const createAdminQ = "INSERT INTO admins (AdminName, AdminEmail, AdminPassword) VALUES (?,?,?);";
-        db.query(createAdminQ, [name, email, password], (err, result) => {
+        const createAdminQ = "INSERT INTO administrators (userName, email, password) VALUES (?,?,?);";
+        db.query(createAdminQ, [userName, email, password], (err, result) => {
             if(err) throw err;
             res.send("Admin successfully created.");
         });
@@ -40,7 +40,7 @@ const db = mysql.createConnection({
         const adminEmail = req.query.email;
         const adminPassword = req.query.password;
 
-        getAdminInfoQ = "SELECT * FROM admins WHERE AdminEmail = ? AND AdminPassword = ?;"
+        getAdminInfoQ = "SELECT * FROM administrators WHERE email = ? AND password = ?;"
         db.query(getAdminInfoQ, [adminEmail, adminPassword], (err, result) => {
             if(err){
                 console.log(error);
@@ -51,6 +51,49 @@ const db = mysql.createConnection({
         });
     });
 
+    //Update administrators table once is logged in the system.
+    app.put("/api/updateAdminStatus", (req, res) => {
+        const email = req.body.email;
+        const updateAdminStatusQ = "UPDATE administrators SET status = 1  WHERE email = ?";
+        db.query(updateAdminStatusQ, [email], (err, result) => {
+            if(err){
+                console.log(err);
+            }
+            else{
+                res.send(result);
+            }
+        });
+    });
+
+    //Check if an admin is logged at the time
+    app.get("/api/isAdminLogged", (req, res) => {
+        const searchForLoggedAdmin = "SELECT email from administrators WHERE status = 1";
+        db.query(searchForLoggedAdmin, (err, result) => {
+            if(err){
+                console.log(err);
+            }
+            else{   
+                res.send(result);
+            }
+        });
+    });
+
+    //Update administrators table once the log out button is clicked;
+    app.put("/api/logOutAdmin", (req, res) => {
+        const email = req.body.email;
+        console.log(email);
+        const updateAdminStatusQ = "UPDATE administrators SET status = 0  WHERE email = ?";
+        db.query(updateAdminStatusQ, [email], (err, result) => {
+            if(err){
+                console.log(err);
+            }
+            else{
+                res.send(result);
+            }
+        });
+    });
+
+//Operations pages
     //get all recipes for admin
     app.get(("/api/getAllRecipes"), (req, res) =>{
         const selectRecipesQ = "SELECT IdRecipe, Name, Nacionality, Difficulty, Time FROM recipes;"
@@ -87,10 +130,10 @@ const db = mysql.createConnection({
         });
     });
 
-    //Update a recipe
-    app.put(("api/updateRecipe/:RecipeId"), (req, res) => {
+    // //Update a recipe
+    // app.put(("api/updateRecipe/:RecipeId"), (req, res) => {
         
-    })
+    // })
 
     //Delete a recipe
 
