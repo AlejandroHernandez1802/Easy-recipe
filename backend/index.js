@@ -64,6 +64,36 @@ const db = mysql.createConnection({
         });
     });
 
+    //insert new recipe
+    app.post(("/api/createRecipe"),(req, res) => {
+        const recipeName = req.body.name;
+        const recipeIconPath = req.body.iconPath;
+        const recipeGeneralDescription = req.body.generalDescription;
+        const recipeNacionality = req.body.nacionality;
+        const recipeDifficulty = req.body.difficulty;
+        const recipeTime = req.body.time;
+        const recipeIngredientList = req.body.ingredientList;
+        const recipeContent = req.body.recipeContent;
+        const recipeUrl = req.body.videoUrl;
+
+        const insertRecipeQ = "INSERT INTO recipes (Name, IconPath, GeneralDescription, Nacionality, Difficulty, Time, IngredientsList, RecipeContent, url) VALUES (?,?,?,?,?,?,?,?,?);";
+        db.query(insertRecipeQ, [recipeName, recipeIconPath, recipeGeneralDescription, recipeNacionality, recipeDifficulty, recipeTime, recipeIngredientList, recipeContent, recipeUrl], (err, result) => {
+            if(err){
+                console.log(err);
+            }
+            else{
+                console.log("Recipe successfully inserted");
+            }
+        });
+    });
+
+    //Update a recipe
+    app.put(("api/updateRecipe/:RecipeId"), (req, res) => {
+        
+    })
+
+    //Delete a recipe
+
     //get available foods for admin
     app.get(("/api/getAvailableFoods"), (req, res) => {
         const selectAvFoodsQ = "SELECT foods.IdFood, foods.Name, categories.Name AS 'Category' FROM foods INNER JOIN categories ON foods.IdCategory = categories.IdCategory;"
