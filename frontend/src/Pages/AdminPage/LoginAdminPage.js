@@ -1,8 +1,10 @@
 import './Css/Forms.css';
 import FormInputs from '../../Components/AdminPage/RegisterForm/FormInputs';
 import AlterNav from '../../Components/Global/AlterNav';
+
 import{useEffect, useState} from 'react';
 import { Link, useHistory } from 'react-router-dom';
+import swal from 'sweetalert';
 import axios from 'axios';
 const RegisterAdminPage = () => {
 
@@ -17,16 +19,18 @@ const RegisterAdminPage = () => {
         {
             id:1,
             name:"email",
-            type:"text",
-            placeholder:"Email de registro",
-            label:"Correo electrónico"
+            type:"email",
+            placeholder:"Correo electrónico que registraste",
+            errorMssg: "Debe ser una dirección de correo válida.",
+            label:"Correo electrónico",
+            required: true
         },
         {
             id:2,
             name:"password",
             type:"password",
             placeholder:"Escribe tu contraseña",
-            label:"Conttraseña"
+            label:"Contraseña"
         }
     ]
 
@@ -41,18 +45,36 @@ const RegisterAdminPage = () => {
         await axios.get("http://localhost:3001/api/adminLogin", {params:{email:values.email, password:values.password}}).then((response) => {
             loginValues = response.data
             if(loginValues.length === 0){
-                alert("Lo sentimos, no hay perfiles de administrador registrados con tus credenciales.")
+                if(values.email != "" && /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(values.email) === false){
+                    swal({
+                        title:"Dirección no válida.",
+                        text:"No has ingresado un correo electrónico válido.",
+                        icon:"error",
+                        buttons:"cerrar"
+                    })
+                }
+                else if(values.password === "" || values.email === ""){
+                    swal({
+                        title:"Campos vacíos",
+                        text:"Debes diligenciar todos los campos para continuar.",
+                        icon:"warning",
+                        buttons:"cerrar"
+                    })
+                }
             }
             else{
-                logAdmin();
+                logAdmin(values.email);
             }
         })        
     }
 
     //Login the admin and updating the administrators table;
-    const logAdmin = async () => {
+    const logAdmin = async (email) => {
         await axios.put("http://localhost:3001/api/updateAdminStatus", {email:values.email}).then(() => {
-            history.push('/select-operation');
+            history.push({
+                pathname:'/select-operation',
+                state:{email:email}
+            });
         })
     }
 

@@ -1,7 +1,9 @@
 import AlterNav from "../../Components/Global/AlterNav";
 import FormInput from "../../Components/AdminPage/LoggedAccount/FormInput";
+
 import { useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
+import swal from 'sweetalert';
 import axios from "axios";
 
 const AdminLogged = () => {
@@ -33,18 +35,38 @@ const AdminLogged = () => {
         e.preventDefault();
         await axios.get("http://localhost:3001/api/adminLogin", {params:{email:location.state.email, password:values.password}}).then((response) => {
             const adminFound = response.data.length;
-            console.log(adminFound);
             if(adminFound === 0){
-                alert("Lo sentimos, la contraseña que escribiste no es acorde a la cuenta con la sesión iniciada.");
+                swal({
+                    title:"Contraseña incorrecta",
+                    text:"La contraseña que ingresaste no es acorde a la cuenta con la sesión iniciada.",
+                    icon:"error",
+                    buttons:"Cerrar"
+                });
             }
             else{
-                history.push("/select-operation");
+                history.push({
+                    pathname:'/select-operation',
+                    state:{email:location.state.email}
+                });
             }
         });
     }
 
-    const logOut = async (e) => {
+    const confirmLogOut = async (e) => {
         e.preventDefault();
+        swal({
+            title:"Confirmación de cierre de sesión",
+            text:"¿Estás seguro de que quieres cerrar tu sesión?",
+            icon:"warning",
+            buttons:["No", "Sí"]
+          }).then(response => {
+            if(response){
+              logOut();
+            }
+          })
+    }
+
+    const logOut = async () => {
         await axios.put("http://localhost:3001/api/logOutAdmin", {email:location.state.email}).then(() => {
             history.push("/login-admin");
         })
@@ -63,7 +85,7 @@ const AdminLogged = () => {
                             ))}
                             <div className='form-buttons'>
                                 <button className='form-button' type='submit' onClick={getLoggedAdminPassword}>Confirmar contraseña</button>
-                                <button className='form-button' type='submit' onClick={logOut}>Cerrar sesión</button>
+                                <button className='form-button' type='submit' onClick={confirmLogOut}>Cerrar sesión</button>
                             </div>
                         </div>
                     </form>

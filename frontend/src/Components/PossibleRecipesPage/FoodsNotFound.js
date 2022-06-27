@@ -1,5 +1,5 @@
 import '../Css/PossibleRecipesPage/FoodsNotFound.css';
-import AlterNav from '../Global/AlterNav';
+import AlterNavUser from '../Global/AlterNavUser';
 import SadFace from '../../Images/NotFoundFoods/sad-face.png';
 
 import { useHistory } from 'react-router-dom';
@@ -10,7 +10,7 @@ const FoodsNotFound = () =>{
 
     return(
         <div className=''>
-            <AlterNav />
+            <AlterNavUser />
             <div className='fnf-content'>
                 <div className='fnf-image-content'>
                     <img className='fnf-image' src={SadFace}/>

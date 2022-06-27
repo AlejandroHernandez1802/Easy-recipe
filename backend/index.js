@@ -30,8 +30,12 @@ const db = mysql.createConnection({
 
         const createAdminQ = "INSERT INTO administrators (userName, email, password) VALUES (?,?,?);";
         db.query(createAdminQ, [userName, email, password], (err, result) => {
-            if(err) throw err;
-            res.send("Admin successfully created.");
+            if(err){
+                res.send("err");
+            }
+            else{
+                res.send("good");
+            }
         });
     });
 
@@ -81,7 +85,6 @@ const db = mysql.createConnection({
     //Update administrators table once the log out button is clicked;
     app.put("/api/logOutAdmin", (req, res) => {
         const email = req.body.email;
-        console.log(email);
         const updateAdminStatusQ = "UPDATE administrators SET status = 0  WHERE email = ?";
         db.query(updateAdminStatusQ, [email], (err, result) => {
             if(err){

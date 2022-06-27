@@ -1,12 +1,12 @@
 import './Style/SelectOperation.css';
-import AlterNav from '../../../../Components/Global/AlterNav';
+import AlterNavAdminMain from '../../../../Components/Global/AlterNavAdminMain';
 import { Link } from 'react-router-dom';
 
 const SelectOperation = () =>{
 
     return (
         <>
-            <AlterNav />
+            <AlterNavAdminMain />
             <div className="select-operation-page-content">
                 <Link to={{pathname:"/categories-operations"}}>
                     <div className='operations-columns categories'>

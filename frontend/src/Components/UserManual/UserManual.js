@@ -1,6 +1,6 @@
 import '../Css/UserManual/UserManual.css';
 
-import AlterNav from "../Global/AlterNav";
+import AlterNavUser from '../Global/AlterNavUser';
 
 import step01 from '../../Images/UserManual/1.PNG';
 import step02 from '../../Images/UserManual/2.PNG';
@@ -16,7 +16,7 @@ import step10 from '../../Images/UserManual/10.PNG';
 const UserManual = () => {
     return(
         <div>
-            <AlterNav />
+            <AlterNavUser />
             <div className="user-manual-content">
                 <p className="user-manual-title">¡Hola cocineros!</p>
 

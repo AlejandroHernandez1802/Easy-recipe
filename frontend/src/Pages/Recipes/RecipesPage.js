@@ -1,4 +1,4 @@
-import AlterNav from "../../Components/Global/AlterNav";
+import AlterNavUser from '../../Components/Global/AlterNavUser';
 import SelectedFoods from "../../Components/HomePage/SelectedFoods";
 import RecipesPagination from "../../Components/PossibleRecipesPage/Pagination/RecipesPagination";
 import FoodsNotFound from "../../Components/PossibleRecipesPage/FoodsNotFound";
@@ -58,7 +58,7 @@ const RecipesPage = (props) =>{
             return(
                 <>
                     <div>
-                        <AlterNav/>
+                        <AlterNavUser/>
                         <SelectedFoods selectedFoods={selectedFoods}/>
                         <RecipesPagination possibleRecipes={possibleRecipes}/>
                     </div>

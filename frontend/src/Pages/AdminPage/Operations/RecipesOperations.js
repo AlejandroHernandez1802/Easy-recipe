@@ -1,11 +1,11 @@
-import AlterNav from '../../../Components/Global/AlterNav';
+import AlterNavAdmin from '../../../Components/Global/AlterNavAdmin';
 import RecipesTable from '../../../Components/AdminPage/RecipesOperations/RecipesTable';
 
 const RecipesOperations = () => {    
 
     return (
         <>
-            <AlterNav />
+            <AlterNavAdmin />
             <div className='table-zone'>
                 <RecipesTable />
             </div>

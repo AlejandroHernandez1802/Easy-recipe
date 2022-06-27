@@ -1,7 +1,7 @@
 import {useState, useEffect} from 'react';
 import Axios from 'axios';
 
-import AlterNav from '../../Components/Global/AlterNav';
+import AlterNavUser from '../../Components/Global/AlterNavUser';
 import SelectedRecipe from '../../Components/SelectedRecipePage/SelectedRecipe';
 
 
@@ -19,7 +19,7 @@ const SelectedRecipePage = (props) => {
 
     return ( 
         <div className='selected-recipe-template'>
-           <AlterNav />
+           <AlterNavUser />
            <SelectedRecipe recipeData={recipeData}/>
         </div>
      );

@@ -4,6 +4,7 @@ import AlterNav from '../../Components/Global/AlterNav';
 
 import { Link, useHistory } from 'react-router-dom';
 import{useState} from 'react';
+import swal from 'sweetalert';
 import axios from 'axios';
 
 const RegisterAdminPage = () => {
@@ -32,8 +33,8 @@ const RegisterAdminPage = () => {
             id:2,
             name:"email",
             type:"email",
-            placeholder:"Correo electrónico que registraste",
-            errorMssg: "Debe ser una dirección válida",
+            placeholder:"Correo electrónico a registrar",
+            errorMssg: "Debe ser una dirección de correo válida.",
             label:"Correo electrónico",
             required:true
         },
@@ -73,7 +74,12 @@ const RegisterAdminPage = () => {
         }
 
         if(values.username === "" && values.email === "" && values.password === "" && values.confirmPassword === ""){
-            alert("Debes llenar todos los campos para registrar un nuevo perfil de administrador.");
+                swal({
+                    title:"Campos no llenados",
+                    text:"Debes llenar todos los campos del formulario para crear un nuevo perfil de administrador.",
+                    icon:"warning",
+                    buttons:"Cerrar"
+                });
         }
         else{
             if(/^[A-Za-z0-9]{3,20}$/.test(values.username) === true){
@@ -88,9 +94,24 @@ const RegisterAdminPage = () => {
                 }
             }
             if(canRegister.userNameOk === true && canRegister.emailOk === true && canRegister.passwordOk === true){
-                axios.post("http://localhost:3001/api/adminRegister", {AdminName:values.username, AdminEmail:values.email, AdminPassword:values.password}).then(() => {
-                    alert("Te estamos registrando en nuestra base de datos, espera un segundo.");
+                axios.post("http://localhost:3001/api/adminRegister", {AdminName:values.username, AdminEmail:values.email, AdminPassword:values.password}).then((response) => {
+                if(response.data === "err"){
+                    swal({
+                        title:"Correo electrónico ya registrado",
+                        text:"La dirección de correo electrónico que ingresaste ya está registrada en nuestro sistema. Ingresa una nueva.",
+                        icon:"error",
+                        buttons:"Cerrar"
+                    });
+                }
+                else{
+                    swal({
+                        title:"Perfil de administrador creado.",
+                        text:"Su cuenta ha sido creada correctamente.",
+                        icon:"success",
+                        buttons:"Cerrar",
+                    })
                     history.push('/login-admin');
+                    }
                 })
             }
             else{

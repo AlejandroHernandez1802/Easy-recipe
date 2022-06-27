@@ -10,6 +10,7 @@ const FormInputs = (props) => {
             <div className='form-inputs'>
                 <label className='form-label'>{label}</label>
                 <input className='loginForm-input' {...inputProps} onChange={onChange}/>
+                <span className='loginFormErrorMessage'>{errorMssg}</span>
             </div>
         </>
     )

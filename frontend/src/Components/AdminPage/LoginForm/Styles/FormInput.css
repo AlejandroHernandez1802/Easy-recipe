@@ -8,13 +8,13 @@
     color: black;
 }
 
-.registerFormErrorMessage{
+.loginFormErrorMessage{
     display: flex;
     font-size: 12px;
     color: red;
     display: none;
 }
 
-input:invalid[focused="true"] ~ .registerFormErrorMessage {
+input:invalid[focused="true"] ~ .loginFormErrorMessage {
     display: block;
 }
