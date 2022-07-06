@@ -2,17 +2,29 @@ import logo from "../Images/logo.png";
 import '../Css/Global/AlterNavAdminMain.css';
 
 import { useHistory, useLocation } from 'react-router-dom';
+import { useEffect } from "react";
 import swal from 'sweetalert';
 import axios from "axios";
 
 const AlterNavAdminMain = () => {
 
   let history = useHistory();
-  let location = useLocation();
+  let adminEmail = "";
+
+  const checkForAdminLogged = async () => {
+    await axios.get("http://localhost:3001/api/isAdminLogged").then((response) => {
+        adminEmail = response.data[0].email
+    })
+  }
+
+  const logOut = async () => {
+    await axios.put("http://localhost:3001/api/logOutAdmin", {email:adminEmail}).then(() => {
+          history.push("/login-admin");
+        })
+  }
 
   const confirmLogout = async (e) => {
       e.preventDefault();
-
       swal({
         title:"Confirmación de cierre de sesión",
         text:"¿Estás seguro de que quieres cerrar tu sesión?",
@@ -25,11 +37,9 @@ const AlterNavAdminMain = () => {
       })
   }
 
-  const logOut = async () => {
-    await axios.put("http://localhost:3001/api/logOutAdmin", {email:location.state.email}).then(() => {
-          history.push("/login-admin");
-        })
-  }
+  useEffect(() => {
+    checkForAdminLogged();
+  }, [])
 
     return (
 

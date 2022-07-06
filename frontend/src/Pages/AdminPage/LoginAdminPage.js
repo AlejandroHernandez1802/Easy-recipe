@@ -63,17 +63,16 @@ const RegisterAdminPage = () => {
                 }
             }
             else{
-                logAdmin(values.email);
+                logAdmin();
             }
         })        
     }
 
     //Login the admin and updating the administrators table;
-    const logAdmin = async (email) => {
+    const logAdmin = async () => {
         await axios.put("http://localhost:3001/api/updateAdminStatus", {email:values.email}).then(() => {
             history.push({
                 pathname:'/select-operation',
-                state:{email:email}
             });
         })
     }
@@ -91,7 +90,7 @@ const RegisterAdminPage = () => {
             }
         });
     }
-
+    
     useEffect(() => {
         isAdminLogged();
     }, [])

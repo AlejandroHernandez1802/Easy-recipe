@@ -35,7 +35,15 @@ const AdminLogged = () => {
         e.preventDefault();
         await axios.get("http://localhost:3001/api/adminLogin", {params:{email:location.state.email, password:values.password}}).then((response) => {
             const adminFound = response.data.length;
-            if(adminFound === 0){
+            if(values.password === ""){
+                swal({
+                    title:"Campo vacío",
+                    text:"Debes llenar el campo para validar el formulario",
+                    icon:"error",
+                    buttons:"Cerrar"
+                });
+            }
+            else if(adminFound === 0){
                 swal({
                     title:"Contraseña incorrecta",
                     text:"La contraseña que ingresaste no es acorde a la cuenta con la sesión iniciada.",
@@ -45,8 +53,7 @@ const AdminLogged = () => {
             }
             else{
                 history.push({
-                    pathname:'/select-operation',
-                    state:{email:location.state.email}
+                    pathname:'/select-operation'
                 });
             }
         });

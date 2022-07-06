@@ -16,6 +16,8 @@ import RecipesPage from './Pages/Recipes/RecipesPage';
 import SelectedRecipePage from './Pages/SelectedRecipe/SelectedRecipePage';
 
 import UserManual from './Components/UserManual/UserManual';
+
+import ModuleNotFound from './Pages/ModuleNotFound/ModuleNotFound';
 import {BrowserRouter as Router, Switch, Route, Redirect} from 'react-router-dom';
 
 class App extends React.Component{
@@ -46,6 +48,8 @@ class App extends React.Component{
             {/* Initial page */}
             <Route path="/user-manual" component={UserManual}/>
             <Redirect exact from = "/" to="/role-selection"/>
+
+            <Route path="*" component={ModuleNotFound}/>
           </Switch>
         </Router>
       </div> 
