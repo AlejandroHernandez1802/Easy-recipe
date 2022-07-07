@@ -1,8 +1,9 @@
 import './Styles/FoodsTable.css';
-import { Table, TableContainer, TableHead, TableCell, TableBody, TableRow, Modal, Button, TextField, TablePagination, TableSortLabel } from '@material-ui/core';
+import { Table, TableContainer, TableHead, TableCell, TableBody, TableRow, Modal, Button, TextField, TablePagination, Select} from '@material-ui/core';
 import {Edit, Delete} from '@material-ui/icons';
 import { makeStyles } from '@material-ui/core/styles';
 import {useState, useEffect} from 'react';
+import swal from 'sweetalert';
 import axios from 'axios';
 
 
@@ -21,6 +22,9 @@ const useStyles = makeStyles((theme)=> ({
         color: 'white',
         fontWeight: 'bold',
     },
+    icons:{
+        cursor: 'pointer'
+    },
     modal: {
         position:'absolute',
         width:400,
@@ -30,9 +34,6 @@ const useStyles = makeStyles((theme)=> ({
         padding: theme.spacing(2,4,3),
         top:'5%',
         left:'40%'
-    },
-    icons:{
-        cursor: 'pointer'
     },
     inputMaterial:{
         width:'100%'
@@ -47,58 +48,46 @@ const FoodsTable = () => {
 
     const styles = useStyles();
 
-
     //Table configuration(paging, filtering)
+        //Object to define table head cells
+        const tableHeads = [
+            {
+                id: 1, 
+                label:"Nombre de la receta"
+            },
+            {
+                id: 2, 
+                label:"Categoría"
+            },
+            {
+                id: 3, 
+                label:"Operaciones"
+            }
+        ]
 
-    //Table paging
-    const pages = [10, 20, 30];
-    const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(pages[page])
+        //Table paging
+        const pages = [7, 14, 21];
+        const [page, setPage] = useState(0);
+        const [rowsPerPage, setRowsPerPage] = useState(pages[page])
 
-    const handleChangePage = (event, newPage) => {
-        setPage(newPage);
-    }
-
-    const handleChangeRowsPerPage = (event) => {
-        setRowsPerPage(parseInt(event.target.value, 10));
-        setPage(0);
-    }
-
-    const recordsAfterPagingAndSorting = () => {
-        return (
-            avFoods.slice(page*rowsPerPage, (page+1)*rowsPerPage)
-        )
-    }
-
-    //Table ordering
-
-    //Object to define table head cells
-    const tableHeads = [
-        {
-            id: 1, 
-            label:"Nombre de la receta"
-        },
-        {
-            id: 2, 
-            label:"Categoría"
-        },
-        {
-            id: 3, 
-            label:"Operaciones"
+        const handleChangePage = (event, newPage) => {
+            setPage(newPage);
         }
-    ]
-    const [order, setOrder] = useState();
-    const [orderBy, setOrderBy] = useState();
 
+        const handleChangeRowsPerPage = (event) => {
+            setRowsPerPage(parseInt(event.target.value, 10));
+            setPage(0);
+        }
 
+        const recordsAfterPagingAndSorting = () => {
+            return (
+                avFoods.slice(page*rowsPerPage, (page+1)*rowsPerPage)
+            )
+        }
 
-
-
-
-    //States configuration
-    const [avFoods, setAvFoods] = useState([]);
 
     //Function to bring the data from the database
+    const [avFoods, setAvFoods] = useState([]);
     const getAvailableFoods = async () => {
         await axios.get("http://localhost:3001/api/getAvailableFoods").then((response) => {
             const data = response.data;
@@ -112,20 +101,77 @@ const FoodsTable = () => {
     }, [])
 
 
+
+    //States configuration
+
+        //Insert modal
+        //State to control the insert modal
+        const [openInsertModal, setOpenInsertModal] = useState(false);
+        //Satate to handle the food insertion
+        const [foodToInsert, setFoodToInsert] = useState({
+            name:'',
+            iconPath:'',
+            categoryId:0
+        })
+
+    
+    //Functions to control the modals
+        
+        //Handle input changes
+        const handleChange = (e) => {
+            const {name, value} = e.target;
+            setFoodToInsert(prevState => ({
+                ...prevState, [name]:value
+            }))
+        }
+
+        //Insert modal
+        const handleInsertModal = () => {
+            setOpenInsertModal(!openInsertModal);
+        }
+
+
     //Function to handle the food that is being selected.
     const handleSelectedFood = () => {
 
     }
 
     //Functions for the CRUD operations.
-    const insertFood = () => {
-
+    const insertFood = async() => {
+        await axios.post("http://localhost:3001/api/createNewFood", foodToInsert).then((response) => {
+            handleInsertModal();
+            swal({
+                title:"Alimento creado",
+                text:"El alimento fue correctamente creado",
+                icon:"success",
+                buttons:"Cerrar"
+            })
+        })
     }
+
+
+
+    //Modals implementation
+    const insertModalBody = (
+        <div className={styles.modal}>
+            <h3 className={styles.modalTitle}>Nuevo alimento</h3>
+            <TextField name="name" className={styles.inputMaterial} label="Nombre del alimento" onChange={handleChange}/>
+            <br />
+            <TextField name="iconPath" className={styles.inputMaterial} label="URL de imagen" onChange={handleChange}/>
+            <br />
+            <TextField name="categoryId" className={styles.inputMaterial} label="Categoría a la que pertenece" onChange={handleChange}/>
+            <br /><br />
+            <div align="right">
+                <Button color="primary" onClick={insertFood}>Insertar</Button>
+                <Button onClick={handleInsertModal}>Cancelar</Button>
+            </div>
+        </div>
+    )
 
     return(
         <>
-            <div className='foods-table-title'><h1>Foods operations</h1></div>
-            <Button variant="contained" className={styles.buttonInsert} onClick={insertFood}>Agregar un nuevo alimento</Button>
+            <div className='foods-table-title'><h1>Administración alimentos</h1></div>
+            <Button variant="contained" className={styles.buttonInsert} onClick={handleInsertModal}>Agregar un nuevo alimento</Button>
             <div className="table-zone">
                 <TableContainer>
                         <Table className={styles.table}>
@@ -133,7 +179,7 @@ const FoodsTable = () => {
                                 <TableRow>
                                     {tableHeads.map((tableHead) => {
                                         return (
-                                            <TableCell key={tableHead.id} className={styles.tHeadFont}><TableSortLabel>{tableHead.label}</TableSortLabel></TableCell>
+                                            <TableCell key={tableHead.id} className={styles.tHeadFont}>{tableHead.label}</TableCell>
                                         )
                                     })}
                                 </TableRow>
@@ -152,6 +198,7 @@ const FoodsTable = () => {
                 </TableContainer>
                 <TablePagination component="div" page={page} rowsPerPageOptions={pages}
                  rowsPerPage={rowsPerPage} count={avFoods.length} onPageChange={handleChangePage} onRowsPerPageChange={handleChangeRowsPerPage}/>
+                <Modal open={openInsertModal} onClose={handleInsertModal}>{insertModalBody}</Modal>
             </div>
         </>
     )

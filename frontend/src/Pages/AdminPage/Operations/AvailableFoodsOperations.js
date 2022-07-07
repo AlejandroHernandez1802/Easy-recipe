@@ -15,9 +15,6 @@ const AvailableFoodsOperations = () => {
             if(response.data.length === 0){
                 redirectToHomePage();
             }
-            else{
-                console.log("Hay alguien en sesión");
-            }
         })
     }
 

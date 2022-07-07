@@ -153,6 +153,23 @@ const db = mysql.createConnection({
         });
     });
 
+    //Insert a new food
+    app.post(("/api/createNewFood"), (req, res) => {
+        const foodName = req.body.name;
+        const iconPath = req.body.iconPath;
+        const categoryId = req.body.categoryId;
+
+        const insertFoodQ = "INSERT INTO foods (Name, IconPath, IdCategory) VALUES (?,?,?)"
+        db.query(insertFoodQ, [foodName,iconPath,categoryId],(err, result) => {
+            if(err){
+                console.log(err);
+            }
+            else{
+                res.send(result);
+            }
+        })
+    })
+
 //User pages
     //Homepage
     app.get(("/api/getCategories" ),(req,res) => {
