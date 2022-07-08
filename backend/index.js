@@ -96,7 +96,116 @@ const db = mysql.createConnection({
         });
     });
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 //Operations pages
+
+    //Insert a new category
+    app.post(("/api/createCategory"), (req, res) => {
+        const categoryName = req.body.Name;
+        const iconPath = req.body.IconPath;
+        const createCategoryQ = "INSERT INTO categories (Name, IconPath) VALUES (?, ?);";
+        db.query(createCategoryQ, [categoryName, iconPath],(err, result) => {
+            if(err){
+                console.log(err);
+            }
+            else{
+                res.send(result);
+            }
+        });
+    });
+
+    //Update category
+    app.put(("/api/updateCategory"), (req, res) => {
+        const categoryName = req.body.Name;
+        const iconPath = req.body.IconPath;
+        const categoryId = req.body.IdCategory;
+        const updateCategoryQ = "UPDATE categories SET Name=?, IconPath=? WHERE IdCategory = ?";
+        db.query(updateCategoryQ, [categoryName, iconPath, categoryId], (err, result) => {
+            if(err){
+                console.log(err);
+            }
+            else{
+                res.send(result);
+            }
+        });
+    });
+
+    //Delete category
+    app.delete(("/api/deleteCategory/:IdCategory"), (req, res) => {
+        const IdCategory = req.params.IdCategory;
+        console.log(IdCategory);
+        const deleteCategoryQ = "DELETE FROM categories where IdCategory = ?";
+        db.query(deleteCategoryQ, [IdCategory], (err, result) => {
+            if(err){
+                console.log(err);
+            }
+            else{
+                res.send(result);
+            }
+        });
+    });
+
+
+
+
+
+
+
+    //get available foods for admin
+    app.get(("/api/getAvailableFoods"), (req, res) => {
+        const selectAvFoodsQ = "SELECT foods.IdFood, foods.Name, categories.Name AS 'Category' FROM foods INNER JOIN categories ON foods.IdCategory = categories.IdCategory;"
+        db.query(selectAvFoodsQ, (err, result) => {
+            if(err){
+                console.log(error);
+            }
+            else{
+                res.send(result);
+            }
+        });
+    });
+
+    //Insert a new food
+    app.post(("/api/createNewFood"), (req, res) => {
+        const foodName = req.body.foodName;
+        const iconPath = req.body.foodIconPath;
+        const categoryId = req.body.foodCategory;
+
+        const insertFoodQ = "INSERT INTO foods (Name, IconPath, IdCategory) VALUES (?,?,?)"
+        db.query(insertFoodQ, [foodName,iconPath,categoryId],(err, result) => {
+            if(err){
+                res.send("Error");
+            }
+            else{
+                res.send(result);
+            }
+        })
+    })
+
+
+
+
+
+
     //get all recipes for admin
     app.get(("/api/getAllRecipes"), (req, res) =>{
         const selectRecipesQ = "SELECT IdRecipe, Name, Nacionality, Difficulty, Time FROM recipes;"
@@ -133,42 +242,28 @@ const db = mysql.createConnection({
         });
     });
 
-    // //Update a recipe
-    // app.put(("api/updateRecipe/:RecipeId"), (req, res) => {
-        
-    // })
 
-    //Delete a recipe
 
-    //get available foods for admin
-    app.get(("/api/getAvailableFoods"), (req, res) => {
-        const selectAvFoodsQ = "SELECT foods.IdFood, foods.Name, categories.Name AS 'Category' FROM foods INNER JOIN categories ON foods.IdCategory = categories.IdCategory;"
-        db.query(selectAvFoodsQ, (err, result) => {
-            if(err){
-                console.log(error);
-            }
-            else{
-                res.send(result);
-            }
-        });
-    });
 
-    //Insert a new food
-    app.post(("/api/createNewFood"), (req, res) => {
-        const foodName = req.body.name;
-        const iconPath = req.body.iconPath;
-        const categoryId = req.body.categoryId;
 
-        const insertFoodQ = "INSERT INTO foods (Name, IconPath, IdCategory) VALUES (?,?,?)"
-        db.query(insertFoodQ, [foodName,iconPath,categoryId],(err, result) => {
-            if(err){
-                console.log(err);
-            }
-            else{
-                res.send(result);
-            }
-        })
-    })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 //User pages
     //Homepage

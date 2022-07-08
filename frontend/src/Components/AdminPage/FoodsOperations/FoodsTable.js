@@ -1,5 +1,5 @@
 import './Styles/FoodsTable.css';
-import { Table, TableContainer, TableHead, TableCell, TableBody, TableRow, Modal, Button, TextField, TablePagination, Select} from '@material-ui/core';
+import { Table, TableContainer, TableHead, TableCell, TableBody, TableRow, TablePagination, Modal, Button, TextField, Select, InputLabel, MenuItem} from '@material-ui/core';
 import {Edit, Delete} from '@material-ui/icons';
 import { makeStyles } from '@material-ui/core/styles';
 import {useState, useEffect} from 'react';
@@ -40,6 +40,9 @@ const useStyles = makeStyles((theme)=> ({
     },
     modalTitle:{
         color:'black'
+    },
+    select:{
+        width:'200px'
     }
 }));
 
@@ -79,7 +82,7 @@ const FoodsTable = () => {
             setPage(0);
         }
 
-        const recordsAfterPagingAndSorting = () => {
+        const foodsAfterPagingAndSorting = () => {
             return (
                 avFoods.slice(page*rowsPerPage, (page+1)*rowsPerPage)
             )
@@ -90,15 +93,23 @@ const FoodsTable = () => {
     const [avFoods, setAvFoods] = useState([]);
     const getAvailableFoods = async () => {
         await axios.get("http://localhost:3001/api/getAvailableFoods").then((response) => {
-            const data = response.data;
-            setAvFoods(data)
+            const foodData = response.data;
+            setAvFoods(foodData)
+        })
+    }
+
+    const [avCategories, setAvCategories] = useState([]);
+    const getAvailableCategories = async() => {
+        await axios.get("http://localhost:3001/api/getCategories").then((response) => {
+            const categoriesData = response.data;
+            setAvCategories(categoriesData);
         })
     }
 
     //useEffect to bring the foods every time the module is loaded.
     useEffect(() => {
         getAvailableFoods();
-    }, [])
+    })
 
 
 
@@ -107,27 +118,32 @@ const FoodsTable = () => {
         //Insert modal
         //State to control the insert modal
         const [openInsertModal, setOpenInsertModal] = useState(false);
+        //State to handle the category selected
+        const [selectedCategory, setSelectedCategory] = useState('');
         //Satate to handle the food insertion
         const [foodToInsert, setFoodToInsert] = useState({
             name:'',
-            iconPath:'',
-            categoryId:0
+            iconPath:''
         })
 
     
     //Functions to control the modals
         
         //Handle input changes
-        const handleChange = (e) => {
+        const handleChangeTFields = (e) => {
             const {name, value} = e.target;
             setFoodToInsert(prevState => ({
                 ...prevState, [name]:value
             }))
         }
+        const handleChangeSelect = (e) => {
+            setSelectedCategory(e.target.value);
+        }
 
         //Insert modal
         const handleInsertModal = () => {
             setOpenInsertModal(!openInsertModal);
+            getAvailableCategories();
         }
 
 
@@ -138,15 +154,38 @@ const FoodsTable = () => {
 
     //Functions for the CRUD operations.
     const insertFood = async() => {
-        await axios.post("http://localhost:3001/api/createNewFood", foodToInsert).then((response) => {
+        const finalFoodToInsert = {
+            foodName:foodToInsert.name,
+            foodIconPath: foodToInsert.iconPath,
+            foodCategory: selectedCategory
+        }
+
+        if(finalFoodToInsert.foodName === '' || finalFoodToInsert.foodIconPath === '' || finalFoodToInsert.foodCategory === ''){
             handleInsertModal();
             swal({
-                title:"Alimento creado",
-                text:"El alimento fue correctamente creado",
-                icon:"success",
+                title:"Campos vacíos",
+                text:"No puedes agregar alimentos si tienes algún campo vacío.",
+                icon:"error",
                 buttons:"Cerrar"
             })
-        })
+        }
+        else{
+            await axios.post("http://localhost:3001/api/createNewFood", finalFoodToInsert).then((response) => {
+                handleInsertModal();
+                swal({
+                    title:"Alimento creado",
+                    text:"El alimento fue correctamente creado",
+                    icon:"success",
+                    buttons:"Cerrar"
+                })
+            })
+
+            setFoodToInsert({
+                name:'',
+                iconPath:''
+            });
+            setSelectedCategory('');
+        }
     }
 
 
@@ -154,12 +193,17 @@ const FoodsTable = () => {
     //Modals implementation
     const insertModalBody = (
         <div className={styles.modal}>
-            <h3 className={styles.modalTitle}>Nuevo alimento</h3>
-            <TextField name="name" className={styles.inputMaterial} label="Nombre del alimento" onChange={handleChange}/>
+            <h3 className={styles.modalTitle}>Agregar alimento</h3>
+            <TextField name="name" className={styles.inputMaterial} label="Nombre del alimento" onChange={handleChangeTFields}/>
             <br />
-            <TextField name="iconPath" className={styles.inputMaterial} label="URL de imagen" onChange={handleChange}/>
-            <br />
-            <TextField name="categoryId" className={styles.inputMaterial} label="Categoría a la que pertenece" onChange={handleChange}/>
+            <TextField name="iconPath" className={styles.inputMaterial} label="URL de imagen" onChange={handleChangeTFields}/>
+            <br /><br />
+            <InputLabel>Categoría a la que pertenece</InputLabel>
+            <Select className={styles.select} labelId='ca-sel' id='category-selection' value={selectedCategory} onChange={handleChangeSelect}>
+                {avCategories.map((category) => (
+                    <MenuItem key={category.IdCategory} value={category.IdCategory}>{category.Name}</MenuItem>
+                ))}
+            </Select>
             <br /><br />
             <div align="right">
                 <Button color="primary" onClick={insertFood}>Insertar</Button>
@@ -186,7 +230,7 @@ const FoodsTable = () => {
                             </TableHead>
 
                             <TableBody>
-                                {recordsAfterPagingAndSorting().map(foods => (
+                                {foodsAfterPagingAndSorting().map(foods => (
                                     <TableRow key={foods.IdFood}>
                                         <TableCell>{foods.Name}</TableCell>
                                         <TableCell>{foods.Category}</TableCell>
