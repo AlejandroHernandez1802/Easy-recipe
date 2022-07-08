@@ -106,7 +106,12 @@ const FoodsTable = () => {
         })
     }
 
-    //useEffect to bring the foods every time the module is loaded.
+    //useEffects
+    useEffect(() => {
+        getAvailableFoods();
+        getAvailableCategories();
+    },[])
+
     useEffect(() => {
         getAvailableFoods();
     })
@@ -118,49 +123,76 @@ const FoodsTable = () => {
         //Insert modal
         //State to control the insert modal
         const [openInsertModal, setOpenInsertModal] = useState(false);
-        //State to handle the category selected
-        const [selectedCategory, setSelectedCategory] = useState('');
+        //State to control the update modal
+        const [openUpdateModal, setOpenUpdateModal] = useState(false);
+        //State to control the delete modal
+        const [openDeleteModal, setOpenDeleteModal] = useState(false);
         //Satate to handle the food insertion
         const [foodToInsert, setFoodToInsert] = useState({
+            Name:'',
+            IconPath:'',
+            IdCategory:''
+        })
+        //Satate to handle the food insertion
+        const [foodToUpdate, setFoodToUpdate] = useState({
+            id:'',
             name:'',
-            iconPath:''
+            path:'',
+            categoryId:'',
+            categoryName:''
         })
 
     
     //Functions to control the modals
         
         //Handle input changes
-        const handleChangeTFields = (e) => {
+        const handleChangeInsert = (e) => {
             const {name, value} = e.target;
             setFoodToInsert(prevState => ({
                 ...prevState, [name]:value
             }))
         }
-        const handleChangeSelect = (e) => {
-            setSelectedCategory(e.target.value);
+
+        const handleChangeUpdate = (e) => {
+            const {name, value} = e.target;
+            setFoodToUpdate(prevState => ({
+                ...prevState, [name]:value
+            }))
         }
 
         //Insert modal
         const handleInsertModal = () => {
             setOpenInsertModal(!openInsertModal);
-            getAvailableCategories();
+        }
+
+        //Update modal
+        const handleUpdateModal = () => {
+            setOpenUpdateModal(!openUpdateModal);
+        }
+
+        //Delete modal
+        const handleDeleteModal = () => {
+            setOpenDeleteModal(!openDeleteModal);
         }
 
 
     //Function to handle the food that is being selected.
-    const handleSelectedFood = () => {
-
+    const handleSelectedFood = (food, option) => {
+        const valuesToUpdate = {
+            id:food.IdFood,
+            name:food.Name,
+            path:food.IconPath,
+            categoryId:food.IdCategory,
+            categoryName:food.Category
+        }
+        setFoodToUpdate(valuesToUpdate);
+        (option === "Edit") ? setOpenUpdateModal(true):setOpenDeleteModal(true);
     }
 
     //Functions for the CRUD operations.
     const insertFood = async() => {
-        const finalFoodToInsert = {
-            foodName:foodToInsert.name,
-            foodIconPath: foodToInsert.iconPath,
-            foodCategory: selectedCategory
-        }
-
-        if(finalFoodToInsert.foodName === '' || finalFoodToInsert.foodIconPath === '' || finalFoodToInsert.foodCategory === ''){
+        console.log(foodToInsert);
+        if(foodToInsert.Name === '' || foodToInsert.IconPath === '' || foodToInsert.IdCategory === ''){
             handleInsertModal();
             swal({
                 title:"Campos vacíos",
@@ -170,7 +202,7 @@ const FoodsTable = () => {
             })
         }
         else{
-            await axios.post("http://localhost:3001/api/createNewFood", finalFoodToInsert).then((response) => {
+            await axios.post("http://localhost:3001/api/createNewFood", foodToInsert).then((response) => {
                 handleInsertModal();
                 swal({
                     title:"Alimento creado",
@@ -181,11 +213,57 @@ const FoodsTable = () => {
             })
 
             setFoodToInsert({
+                Name:'',
+                IconPath:'',
+                IdCategory:''
+            });
+        }
+    }
+
+    const updateFood = async() => {
+        if(foodToUpdate.name === '' || foodToUpdate.path === '' || foodToUpdate.categoryName === ''){
+            handleUpdateModal();
+            swal({
+                title:"Campos vacíos",
+                text:"No puedes acrualizar el alimento si tienes algún campo vacío.",
+                icon:"error",
+                buttons:"Cerrar"
+            })
+        }
+        else{
+            await axios.put("http://localhost:3001/api/updateFood", foodToUpdate).then((response) => {
+                handleUpdateModal();
+                swal({
+                    title:"Alimento actualizado",
+                    text:"El alimento fue actualizado correctamente",
+                    icon:"success",
+                    buttons:"Cerrar"
+                })
+            })
+
+            setFoodToUpdate({
+                Name:'',
+                IconPath:'',
+                Category:''
+            });
+        }
+    }
+
+    const deleteFood = async() => {
+        await axios.delete(`http://localhost:3001/api/deleteFood/${foodToUpdate.id}`).then((response) => {
+            handleDeleteModal();
+            swal({
+                title:"Alimento eliminado",
+                text:"El alimento fue eliminado correctamente",
+                icon:"success",
+                buttons:"Cerrar"
+            });
+        });
+
+            setFoodToInsert({
                 name:'',
                 iconPath:''
             });
-            setSelectedCategory('');
-        }
     }
 
 
@@ -194,20 +272,52 @@ const FoodsTable = () => {
     const insertModalBody = (
         <div className={styles.modal}>
             <h3 className={styles.modalTitle}>Agregar alimento</h3>
-            <TextField name="name" className={styles.inputMaterial} label="Nombre del alimento" onChange={handleChangeTFields}/>
+            <TextField name="Name" className={styles.inputMaterial} label="Nombre del alimento" onChange={handleChangeInsert}/>
             <br />
-            <TextField name="iconPath" className={styles.inputMaterial} label="URL de imagen" onChange={handleChangeTFields}/>
+            <TextField name="IconPath" className={styles.inputMaterial} label="URL de imagen" onChange={handleChangeInsert}/>
             <br /><br />
             <InputLabel>Categoría a la que pertenece</InputLabel>
-            <Select className={styles.select} labelId='ca-sel' id='category-selection' value={selectedCategory} onChange={handleChangeSelect}>
+            <Select name="IdCategory" className={styles.select} labelId='ca-sel' id='category-selection' value={foodToInsert.IdCategory} onChange={handleChangeInsert}>
                 {avCategories.map((category) => (
                     <MenuItem key={category.IdCategory} value={category.IdCategory}>{category.Name}</MenuItem>
                 ))}
             </Select>
             <br /><br />
             <div align="right">
-                <Button color="primary" onClick={insertFood}>Insertar</Button>
-                <Button onClick={handleInsertModal}>Cancelar</Button>
+                <Button color="primary" onClick={() => insertFood()}>Insertar</Button>
+                <Button onClick={() => handleInsertModal()}>Cancelar</Button>
+            </div>
+        </div>
+    )
+
+    const updateModalBody = (
+        <div className={styles.modal}>
+            <h3 className={styles.modalTitle}>Actualizar alimento</h3>
+            <TextField name="name" className={styles.inputMaterial} label="Nombre del alimento" onChange={handleChangeUpdate} value={foodToUpdate && foodToUpdate.name}/>
+            <br />
+            <TextField name="path" className={styles.inputMaterial} label="URL de imagen" onChange={handleChangeUpdate} value={foodToUpdate && foodToUpdate.path}/>
+            <br /><br />
+            <InputLabel>Categoría a la que pertenece</InputLabel>
+            <Select name="categoryId" className={styles.select} labelId='ca-sel' id='category-selection' value={foodToUpdate && foodToUpdate.categoryId} onChange={handleChangeUpdate}>
+                {avCategories.map((category) => (
+                    <MenuItem key={category.IdCategory} value={category.IdCategory}>{category.Name}</MenuItem>
+                ))}
+            </Select>
+            <br /><br />
+            <div align="right">
+                <Button color="primary" onClick={updateFood}>Insertar</Button>
+                <Button onClick={() =>handleUpdateModal()}>Cancelar</Button>
+            </div>
+        </div>
+    )
+
+    const deleteModalBody = (
+        <div className={styles.modal}>
+            <h3 className={styles.modalTitle}>Eliminar alimento</h3>
+            
+            <div align="right">
+                <Button color="secondary" onClick={() => deleteFood()}>Sí, quiero eliminar</Button>
+                <Button onClick={() => handleDeleteModal()}>Detener operación</Button>
             </div>
         </div>
     )
@@ -215,7 +325,7 @@ const FoodsTable = () => {
     return(
         <>
             <div className='foods-table-title'><h1>Administración alimentos</h1></div>
-            <Button variant="contained" className={styles.buttonInsert} onClick={handleInsertModal}>Agregar un nuevo alimento</Button>
+            <Button variant="contained" className={styles.buttonInsert} onClick={() => handleInsertModal()}>Agregar un nuevo alimento</Button>
             <div className="table-zone">
                 <TableContainer>
                         <Table className={styles.table}>
@@ -230,11 +340,11 @@ const FoodsTable = () => {
                             </TableHead>
 
                             <TableBody>
-                                {foodsAfterPagingAndSorting().map(foods => (
-                                    <TableRow key={foods.IdFood}>
-                                        <TableCell>{foods.Name}</TableCell>
-                                        <TableCell>{foods.Category}</TableCell>
-                                        <TableCell><Edit className={styles.icons}/> &nbsp;&nbsp;&nbsp; <Delete className={styles.icons}/></TableCell>
+                                {foodsAfterPagingAndSorting().map(food => (
+                                    <TableRow key={food.IdFood}>
+                                        <TableCell>{food.Name}</TableCell>
+                                        <TableCell>{food.Category}</TableCell>
+                                        <TableCell><Edit className={styles.icons} onClick={() => handleSelectedFood(food, "Edit")}/> &nbsp;&nbsp;&nbsp; <Delete className={styles.icons} onClick={() => handleSelectedFood(food, "Delete")}/></TableCell>
                                     </TableRow>
                                 ))}
                             </TableBody>
@@ -242,7 +352,9 @@ const FoodsTable = () => {
                 </TableContainer>
                 <TablePagination component="div" page={page} rowsPerPageOptions={pages}
                  rowsPerPage={rowsPerPage} count={avFoods.length} onPageChange={handleChangePage} onRowsPerPageChange={handleChangeRowsPerPage}/>
-                <Modal open={openInsertModal} onClose={handleInsertModal}>{insertModalBody}</Modal>
+                <Modal open={openInsertModal} onClose={() => handleInsertModal()}>{insertModalBody}</Modal>
+                <Modal open={openUpdateModal} onClose={() => handleUpdateModal()}>{updateModalBody}</Modal>
+                <Modal open={openDeleteModal} onClose={() => handleDeleteModal()}>{deleteModalBody}</Modal>
             </div>
         </>
     )

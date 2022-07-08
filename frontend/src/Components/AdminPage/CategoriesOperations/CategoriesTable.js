@@ -109,21 +109,25 @@ const CategoriesTable = () => {
         //Insert modal
         //State to control the insert modal
         const [openInsertModal, setOpenInsertModal] = useState(false);
-        //State to control the update modal
-        const [openUpdateModal, setOpenUpdateModal] = useState(false);
-        //State to control the delete modal
-        const [openDeleteModal, setOpenDeleteModal] = useState(false);
         //Satate to handle the category insertion
         const [categoryToInsert, setCategoryToInsert] = useState({
             Name:'',
             IconPath:''
         });
+        
+
+        //Update modal
+        //State to control the update modal
+        const [openUpdateModal, setOpenUpdateModal] = useState(false);
+        //State to control the delete modal
+        const [openDeleteModal, setOpenDeleteModal] = useState(false);
         //Satate to handle the category update
         const [categoryToUpdate, setCategoryToUpdate] = useState({
-            Id:'',
+            IdCategory:'',
             Name:'',
             IconPath:''
         });
+
 
     
     //Functions to control the modals
@@ -147,12 +151,12 @@ const CategoriesTable = () => {
             setOpenInsertModal(!openInsertModal);
         }
 
-        //Insert modal
+        //Update modal
         const handleUpdateModal = () => {
             setOpenUpdateModal(!openUpdateModal);
         }
 
-        //Insert modal
+        //Delete modal
         const handleDeleteModal = () => {
             setOpenDeleteModal(!openDeleteModal);
         }
@@ -194,7 +198,6 @@ const CategoriesTable = () => {
     }
 
     const updateCategory = async() => {
-
         if(categoryToUpdate.Name === '' || categoryToUpdate.IconPath === ''){
             handleUpdateModal();
             swal({
@@ -239,7 +242,6 @@ const CategoriesTable = () => {
                 });
             });
     }
-
 
 
     //Modals implementation

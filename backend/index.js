@@ -151,9 +151,21 @@ const db = mysql.createConnection({
     });
 
     //Delete category
+    app.get(("/api/getCategoryFoods/:id"), (req, res) => {
+        const categoryId = req.params.id;
+        getCategoryFoodsQ = "SELECT IdFood FROM foods WHERE IdCategory = ?";
+        db.query(getCategoryFoodsQ, [categoryId],(err, result) => {
+            if(err){
+                console.log(err);
+            }
+            else{
+                res.send(result);
+            }
+        });
+    }) ;
+
     app.delete(("/api/deleteCategory/:IdCategory"), (req, res) => {
         const IdCategory = req.params.IdCategory;
-        console.log(IdCategory);
         const deleteCategoryQ = "DELETE FROM categories where IdCategory = ?";
         db.query(deleteCategoryQ, [IdCategory], (err, result) => {
             if(err){
@@ -173,7 +185,7 @@ const db = mysql.createConnection({
 
     //get available foods for admin
     app.get(("/api/getAvailableFoods"), (req, res) => {
-        const selectAvFoodsQ = "SELECT foods.IdFood, foods.Name, categories.Name AS 'Category' FROM foods INNER JOIN categories ON foods.IdCategory = categories.IdCategory;"
+        const selectAvFoodsQ = "SELECT foods.IdFood, foods.Name, foods.IconPath, foods.IdCategory, categories.Name AS 'Category' FROM foods INNER JOIN categories ON foods.IdCategory = categories.IdCategory;"
         db.query(selectAvFoodsQ, (err, result) => {
             if(err){
                 console.log(error);
@@ -186,9 +198,9 @@ const db = mysql.createConnection({
 
     //Insert a new food
     app.post(("/api/createNewFood"), (req, res) => {
-        const foodName = req.body.foodName;
-        const iconPath = req.body.foodIconPath;
-        const categoryId = req.body.foodCategory;
+        const foodName = req.body.Name;
+        const iconPath = req.body.IconPath;
+        const categoryId = req.body.IdCategory;
 
         const insertFoodQ = "INSERT INTO foods (Name, IconPath, IdCategory) VALUES (?,?,?)"
         db.query(insertFoodQ, [foodName,iconPath,categoryId],(err, result) => {
@@ -201,10 +213,37 @@ const db = mysql.createConnection({
         })
     })
 
+    //Update food
+    app.put(("/api/updateFood"), (req, res) => {
+        const foodId = req.body.id;
+        const foodName = req.body.name;
+        const iconPath = req.body.path;
+        const categoryId = req.body.categoryId;
 
+        const insertFoodQ = "UPDATE foods SET Name = ?, IconPath = ?, IdCategory = ? WHERE IdFood = ?"
+        db.query(insertFoodQ, [foodName, iconPath, categoryId, foodId],(err, result) => {
+            if(err){
+                console.log(err);
+            }
+            else{
+                res.send(result);
+            }
+        })
+    })
 
-
-
+    //Delete foodsByRecipe and foods
+    app.delete(("/api/deleteFood/:id"), (req, res) => {
+        const foodId = req.params.id;
+        const deleteFoodsByIdQ = "DELETE FROM foods where IdFood = ?";
+        db.query(deleteFoodsByIdQ, foodId, (err, result) => {
+            if(err){
+                console.log(err);
+            }
+            else{
+                res.send(result);
+            }
+        });
+    });
 
     //get all recipes for admin
     app.get(("/api/getAllRecipes"), (req, res) =>{
