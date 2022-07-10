@@ -41,8 +41,8 @@ const useStyles = makeStyles((theme)=> ({
     modalTitle:{
         color:'black'
     },
-    select:{
-        width:'200px'
+    deleteModalText:{
+        color:'black'
     }
 }));
 
@@ -56,7 +56,7 @@ const FoodsTable = () => {
         const tableHeads = [
             {
                 id: 1, 
-                label:"Nombre de la receta"
+                label:"Nombre del alimento"
             },
             {
                 id: 2, 
@@ -242,9 +242,11 @@ const FoodsTable = () => {
             })
 
             setFoodToUpdate({
-                Name:'',
-                IconPath:'',
-                Category:''
+                id:'',
+                name:'',
+                path:'',
+                categoryId:'',
+                categoryName:''
             });
         }
     }
@@ -260,9 +262,12 @@ const FoodsTable = () => {
             });
         });
 
-            setFoodToInsert({
+            setFoodToUpdate({
+                id:'',
                 name:'',
-                iconPath:''
+                path:'',
+                categoryId:'',
+                categoryName:''
             });
     }
 
@@ -305,7 +310,7 @@ const FoodsTable = () => {
             </Select>
             <br /><br />
             <div align="right">
-                <Button color="primary" onClick={updateFood}>Insertar</Button>
+                <Button color="primary" onClick={updateFood}>Actualizar</Button>
                 <Button onClick={() =>handleUpdateModal()}>Cancelar</Button>
             </div>
         </div>
@@ -314,7 +319,7 @@ const FoodsTable = () => {
     const deleteModalBody = (
         <div className={styles.modal}>
             <h3 className={styles.modalTitle}>Eliminar alimento</h3>
-            
+            <p className={styles.deleteModalText}>¿Estás seguro de que quieres eliminar el alimento: {foodToUpdate.name}?</p>
             <div align="right">
                 <Button color="secondary" onClick={() => deleteFood()}>Sí, quiero eliminar</Button>
                 <Button onClick={() => handleDeleteModal()}>Detener operación</Button>
@@ -324,7 +329,7 @@ const FoodsTable = () => {
 
     return(
         <>
-            <div className='foods-table-title'><h1>Administración alimentos</h1></div>
+            <div className='foods-table-title'><h1>Administración de alimentos</h1></div>
             <Button variant="contained" className={styles.buttonInsert} onClick={() => handleInsertModal()}>Agregar un nuevo alimento</Button>
             <div className="table-zone">
                 <TableContainer>

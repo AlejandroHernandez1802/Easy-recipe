@@ -151,19 +151,6 @@ const db = mysql.createConnection({
     });
 
     //Delete category
-    app.get(("/api/getCategoryFoods/:id"), (req, res) => {
-        const categoryId = req.params.id;
-        getCategoryFoodsQ = "SELECT IdFood FROM foods WHERE IdCategory = ?";
-        db.query(getCategoryFoodsQ, [categoryId],(err, result) => {
-            if(err){
-                console.log(err);
-            }
-            else{
-                res.send(result);
-            }
-        });
-    }) ;
-
     app.delete(("/api/deleteCategory/:IdCategory"), (req, res) => {
         const IdCategory = req.params.IdCategory;
         const deleteCategoryQ = "DELETE FROM categories where IdCategory = ?";
@@ -245,9 +232,14 @@ const db = mysql.createConnection({
         });
     });
 
+
+
+
+
+
     //get all recipes for admin
     app.get(("/api/getAllRecipes"), (req, res) =>{
-        const selectRecipesQ = "SELECT IdRecipe, Name, Nacionality, Difficulty, Time FROM recipes;"
+        const selectRecipesQ = "SELECT * FROM recipes;"
         db.query(selectRecipesQ, (err,result) =>{
             if(err){
                 console.log(error);
@@ -260,23 +252,61 @@ const db = mysql.createConnection({
 
     //insert new recipe
     app.post(("/api/createRecipe"),(req, res) => {
-        const recipeName = req.body.name;
-        const recipeIconPath = req.body.iconPath;
-        const recipeGeneralDescription = req.body.generalDescription;
-        const recipeNacionality = req.body.nacionality;
-        const recipeDifficulty = req.body.difficulty;
-        const recipeTime = req.body.time;
-        const recipeIngredientList = req.body.ingredientList;
-        const recipeContent = req.body.recipeContent;
-        const recipeUrl = req.body.videoUrl;
+        const recipeName = req.body.Name;
+        const recipeIconPath = req.body.IconPath;
+        const recipeGeneralDescription = req.body.GeneralDescription;
+        const recipeNacionality = req.body.Nacionality;
+        const recipeDifficulty = req.body.Difficulty;
+        const recipeTime = req.body.Time;
+        const recipeIngredientList = req.body.IngredientsList;
+        const recipeContent = req.body.RecipeContent;
+        const recipeUrl = req.body.Url;
 
-        const insertRecipeQ = "INSERT INTO recipes (Name, IconPath, GeneralDescription, Nacionality, Difficulty, Time, IngredientsList, RecipeContent, url) VALUES (?,?,?,?,?,?,?,?,?);";
+        const insertRecipeQ = "INSERT INTO recipes (Name, IconPath, GeneralDescription, Nacionality, Difficulty, Time, IngredientsList, RecipeContent, Url) VALUES (?,?,?,?,?,?,?,?,?);";
         db.query(insertRecipeQ, [recipeName, recipeIconPath, recipeGeneralDescription, recipeNacionality, recipeDifficulty, recipeTime, recipeIngredientList, recipeContent, recipeUrl], (err, result) => {
             if(err){
                 console.log(err);
             }
             else{
-                console.log("Recipe successfully inserted");
+                res.send(result);
+            }
+        });
+    });
+
+
+    app.put(("/api/updateRecipe"),(req, res) => {
+        const recipeId = req.body.IdRecipe;
+        const recipeName = req.body.Name;
+        const recipeIconPath = req.body.IconPath;
+        const recipeGeneralDescription = req.body.GeneralDescription;
+        const recipeNacionality = req.body.Nacionality;
+        const recipeDifficulty = req.body.Difficulty;
+        const recipeTime = req.body.Time;
+        const recipeIngredientList = req.body.IngredientsList;
+        const recipeContent = req.body.RecipeContent;
+        const recipeUrl = req.body.Url;
+
+        const insertRecipeQ = "UPDATE recipes SET Name = ?, IconPath = ?, GeneralDescription = ?, Nacionality = ?, Difficulty = ?," 
+        +"Time = ?, IngredientsList = ?, RecipeContent = ?, Url = ? WHERE IdRecipe = ?;";
+        db.query(insertRecipeQ, [recipeName, recipeIconPath, recipeGeneralDescription, recipeNacionality, recipeDifficulty, recipeTime, recipeIngredientList, recipeContent, recipeUrl, recipeId], (err, result) => {
+            if(err){
+                console.log(err);
+            }
+            else{
+                res.send(result);
+            }
+        });
+    });
+
+    app.delete(("/api/deleteRecipe/:id"),(req, res) => {
+        const recipeId = req.params.id;
+        const insertRecipeQ = "DELETE FROM recipes WHERE IdRecipe = ?";
+        db.query(insertRecipeQ, [recipeId], (err, result) => {
+            if(err){
+                console.log(err);
+            }
+            else{
+                res.send(result);
             }
         });
     });
